@@ -12,6 +12,6 @@ class Admin extends Model
     protected $table = 'auth_admin';
     protected $primaryKey = 'usr_id';
     public $timestamps = false;
-    protected $fillable = ['usr_token'];
+    protected $fillable = ['usr_name', 'usr_pass','usr_token'];
 
 }

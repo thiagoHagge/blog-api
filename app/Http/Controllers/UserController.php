@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function __invoke(Request $req)
     {
-        $query = Admin::where('usr_login', $req->login);
+        $query = Admin::where('usr_name', $req->login);
         $admin = $query->first();
         if($admin === null) {
             return response()->json(['error' => 'Usuário inválido'], 200);

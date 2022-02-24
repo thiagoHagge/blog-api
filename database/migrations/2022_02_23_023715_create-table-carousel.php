@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableAdmin extends Migration
+class CreateTableCarousel extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateTableAdmin extends Migration
      */
     public function up()
     {
-        Schema::create('auth_admin', function (Blueprint $table) {
-            $table->id('usr_id');
-            $table->string('usr_name');
-            $table->string('usr_pass');
-            $table->string('usr_token')->nullable();
+        Schema::create('front_carousel', function (Blueprint $table) {
+            $table->id('crsl_id');
+            $table->string('crsl_title');
+            $table->string('crsl_subtitle')->nullable();
+            $table->string('crsl_image');
         });
     }
 
@@ -28,6 +28,6 @@ class CreateTableAdmin extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('auth_admin');
+        Schema::dropIfExists('front_carousel');
     }
 }
