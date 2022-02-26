@@ -15,7 +15,7 @@ class CreateTableCarousel extends Migration
     {
         Schema::create('front_carousel', function (Blueprint $table) {
             $table->id('crsl_id');
-            $table->string('crsl_title');
+            $table->string('crsl_title')->nullable();
             $table->string('crsl_subtitle')->nullable();
             $table->string('crsl_image');
         });

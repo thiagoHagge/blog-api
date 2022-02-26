@@ -36,8 +36,9 @@ class NewsController extends Controller
     public function create(Request $req)
     {
         // Create link and check if already exists
+        
         $slug = $this->cleanString($req->title);
-        if(News::where('news_slug' ,$slug)->first()) {
+        if(News::where('news_slug' ,$slug)->first() && empty($req->link)) {
             return response()->json(['error' => 'Título já utilizado', 'success' => false]);
         }
         $thisNews = ['news_slug' => $slug, 'news_title' => $req->title, 'news_content' => $req->content];
@@ -49,7 +50,8 @@ class NewsController extends Controller
             $req->image->move(public_path('images'), $imageName);
             $thisNews['news_image'] = $imageName;
         }
-
+        // return response()->json(['success' => true, 'title' => $req->title, $req->content, $imageName]);
+        // // Crate page
         if(!empty($req->link)) {
             News::where('news_slug', $req->link)->update($thisNews);
             return response()->json(['success' => true, 'link' => $slug]);

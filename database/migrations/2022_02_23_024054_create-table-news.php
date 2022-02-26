@@ -17,9 +17,10 @@ class CreateTableNews extends Migration
             $table->id('news_id');
             $table->string('news_slug');
             $table->string('news_title');
-            $table->string('crsl_subtitle');
             $table->text('news_content');
-            $table->string('news_image');
+            $table->string('news_image')->nullable();
+            $table->dateTime('news_creation');
+            $table->dateTime('news_updated');
         });
     }
 
