@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\News;
+use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
@@ -45,10 +46,9 @@ class NewsController extends Controller
 
         // Upload image
         if(!empty($req->image)) {
-            $imageName = time().'.'.$req->image->extension();  
-            
-            $req->image->move(public_path('images'), $imageName);
-            $thisNews['news_image'] = $imageName;
+            $path = Storage::disk('s3')->put('images', $req->image);
+            $path = Storage::disk('s3')->url($path);
+            $thisNews['news_image'] = $path;
         }
         // return response()->json(['success' => true, 'title' => $req->title, $req->content, $imageName]);
         // // Crate page

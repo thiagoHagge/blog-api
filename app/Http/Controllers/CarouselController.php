@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Carousel;
+use Illuminate\Support\Facades\Storage;
 
 class CarouselController extends Controller
 {
     public function createItem(Request $req) {
         $thisCarousel = ['crsl_title' => $req->title, 'crsl_subtitle' => $req->subtitle];
         if(!empty($req->image)) {
-            $imageName = time().'.'.$req->image->extension();  
             // Upload image
-            $req->image->move(public_path('images'), $imageName);
-            $thisCarousel['crsl_image'] = $imageName;
+            $path = Storage::disk('s3')->put('images', $req->image);
+            $path = Storage::disk('s3')->url($path);
+            $thisCarousel['crsl_image'] = $path;
         }
         if(!empty($req->id)) {
             Carousel::find($req->id)->update($thisCarousel);
