@@ -65,13 +65,13 @@ class NewsController extends Controller
 
     public function read()
     {
-        $news = News::selectRaw('news_slug as link, news_title as title, news_image as image')->get();
+        $news = News::selectRaw('news_id as id,news_slug as link, news_title as title, news_image as image')->get();
         return response()->json(['success' => true, 'news' => $news]);
     }
 
     public function readItem(Request $req)
     {
-        $news = News::selectRaw('news_content as content, news_title as title, news_image as image')->where('news_slug', $req->slug)->first();
+        $news = News::selectRaw('news_id as id, news_content as content, news_title as title, news_image as image')->where('news_slug', $req->slug)->first();
         return response()->json(['success' => true, 'news' => $news]);
     }
 
@@ -145,14 +145,15 @@ class NewsController extends Controller
         // return response()->json(['success' => true, 'content' => $page->content]);
     }
 
-    public function deletePage(Request $req) {
-        $page = Page::where('pg_link', $req->page)->delete();
-        $pages = Page::selectRaw('pg_link as link, pg_name as name, pg_order as position')->where('pg_order', '>', 0)->where('pg_parent', 0)->orderBy('pg_order')->get();
-        if(!$page) {
-            return response()->json(['error' => 'Página não encontrada', 'success' => false, 'pages' => $pages]);
-        }
+    public function delete(Request $req) {
+        // FIXME: DO IT.
+        // $page = Page::where('pg_link', $req->page)->delete();
+        // $pages = Page::selectRaw('pg_link as link, pg_name as name, pg_order as position')->where('pg_order', '>', 0)->where('pg_parent', 0)->orderBy('pg_order')->get();
+        // if(!$page) {
+        //     return response()->json(['error' => 'Página não encontrada', 'success' => false, 'pages' => $pages]);
+        // }
         
-        return response()->json(['success' => true, 'pages' => $pages]);
+        // return response()->json(['success' => true, 'pages' => $pages]);
     }
 
 }

@@ -33,4 +33,12 @@ class UserController extends Controller
         }
         return response()->json(['error' => false], 200);
     }
+
+    public function checkTokenStr($tokenStr)
+    {
+        $query = Admin::where('usr_token', $tokenStr);
+        $admin = $query->first();
+        return $admin === null ? false : true;
+        
+    }
 }

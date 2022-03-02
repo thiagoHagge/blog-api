@@ -19,19 +19,25 @@ use App\Http\Controllers\NewsController;
 */
 Route::post('/auth', UserController::class);
 Route::post('/check', [UserController::class, 'checkToken']);
-Route::post('/newPage', [PageController::class, 'createPage']);
+
 Route::get('/getPages', [PageController::class, 'readPages']);
-Route::put('/updatePage', [PageController::class, 'updatePage']);
 Route::get('/getContent/{page}', [PageController::class, 'readPage']);
-Route::put('/setOrder', [PageController::class, 'setOrder']);
-Route::delete('/deletePage/{page}', [PageController::class, 'deletePage']);
-
-Route::post('carousel/new', [CarouselController::class, 'createItem']);
 Route::get('carousel/get', [CarouselController::class, 'getItems']);
-Route::delete('carousel/delete/{id}', [CarouselController::class, 'delete']);
-
-Route::post('news/new', [NewsController::class, 'create']);
 Route::get('news/get/', [NewsController::class, 'read']);
 Route::get('news/get/{slug}', [NewsController::class, 'readItem']);
-// Teste
-Route::post('/saveImage', [CarouselController::class, 'saveImage']);
+
+Route::group(['middleware' => ['token.valid']], function() {
+    Route::post('/newPage', [PageController::class, 'createPage']);
+    Route::put('/updatePage', [PageController::class, 'updatePage']);
+    Route::put('/setOrder', [PageController::class, 'setOrder']);
+    Route::delete('/deletePage/{page}', [PageController::class, 'deletePage']);
+    
+    Route::post('carousel/new', [CarouselController::class, 'createItem']);
+    Route::delete('carousel/delete/{id}', [CarouselController::class, 'delete']);
+    
+    Route::post('news/new', [NewsController::class, 'create']);
+    Route::delete('news/delete/{id}', [NewsController::class, 'delete']);
+    
+    // Teste
+    Route::post('/saveImage', [CarouselController::class, 'saveImage']);
+});
