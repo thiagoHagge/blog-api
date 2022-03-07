@@ -15,7 +15,7 @@ class EnsureTokenIsValid
     public function handle(Request $request, Closure $next)
     {
         $token = $request->header('X-Token');
-        return UserController::checkTokenStr($token) ? $next($request) : response()->json([
+        return (new UserController)->checkTokenStr($token) ? $next($request) : response()->json([
             'success' => false,
             'error' => 'Acesso negado'
         ], 403);
