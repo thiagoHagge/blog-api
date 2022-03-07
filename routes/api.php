@@ -24,17 +24,11 @@ Route::get('/getPages', [PageController::class, 'readPages']);
 Route::get('/getContent/{page}', [PageController::class, 'readPage']);
 Route::get('carousel/get', [CarouselController::class, 'getItems']);
 Route::get('news/get/', [NewsController::class, 'read']);
-Route::get('videos/get', function() {
-    return NewsController::read(false, true);
-});
-Route::get('videos/get/limit/{limit}', function(Request $req) {
-    return NewsController::read(intval($req->limit), true);
-});
+Route::get('videos/get', [NewsController::class, 'getVideos']);
+Route::get('videos/get/limit/{limit}', [NewsController::class, 'getVideosLimit']);
 Route::get('news/get/limit/{limit}', [NewsController::class, 'readLimit']);
 Route::get('news/get/{slug}', [NewsController::class, 'readItem']);
-Route::get('videos/get/{slug}', function(Request $req) {
-    return NewsController::read(false, true, $req->slug);
-});
+Route::get('videos/get/{slug}', [NewsController::class, 'getVideo']);
 Route::group(['middleware' => ['token.valid']], function() {
     Route::post('/newPage', [PageController::class, 'createPage']);
     Route::put('/updatePage', [PageController::class, 'updatePage']);

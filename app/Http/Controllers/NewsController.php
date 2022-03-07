@@ -115,4 +115,16 @@ class NewsController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function getVideosLimit(Request $req) {
+        return NewsController::read(intval($req->limit), true);
+    }
+
+    public function getVideos() {
+        return NewsController::read(false, true);
+    }
+
+    public function getVideo(Request $req) {
+        return NewsController::read(false, true, $req->slug);
+    }
+
 }
