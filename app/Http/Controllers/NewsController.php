@@ -116,15 +116,15 @@ class NewsController extends Controller
     }
 
     public function getVideosLimit(Request $req) {
-        return NewsController::read(intval($req->limit), true);
+        return $this->read(intval($req->limit), true);
     }
 
     public function getVideos() {
-        return NewsController::read(false, true);
+        return $this->read(false, true);
     }
 
     public function getVideo(Request $req) {
-        return NewsController::read(false, true, $req->slug);
+        return $this->read(false, true, $req->slug);
     }
 
 }
