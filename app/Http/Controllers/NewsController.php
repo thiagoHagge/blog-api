@@ -40,15 +40,30 @@ class NewsController extends Controller
         
         $slug = $this->cleanString($req->title);
         if(News::where('news_slug' ,$slug)->first() && empty($req->link)) {
-            return response()->json(['error' => 'Título já utilizado', 'success' => false]);
+            return response()->json(['error' => ['component' => 'title', 'message' => 'Título já utilizado'], 'success' => false]);
         }
-        $thisNews = ['news_slug' => $slug, 'news_title' => $req->title, 'news_content' => $req->content];
+        $thisNews = ['news_slug' => $slug, 'news_title' => $req->title, 'news_content' => $req->content == null ? '' : $req->content];
 
+        // Author
+        if(!empty($req->author)) {
+            $thisNews['news_author'] = $req->author;
+        }
+        
         // Upload image
         if(!empty($req->image)) {
             $path = Storage::disk('s3')->put('images', $req->image);
             $path = Storage::disk('s3')->url($path);
             $thisNews['news_image'] = $path;
+        }
+
+        // youtube video
+        if(!empty($req->videoLink)) {
+            $ytId = explode('v=', $req->videoLink);
+            if(!isset($ytId[1])) {
+                return response()->json(['error' => ['component' => 'video', 'message' => 'Link inválido'], 'success' => false]);
+            }
+            $ytId = explode('&', $ytId[1])[0];
+            $thisNews['news_ytId'] = $ytId;
         }
         // return response()->json(['success' => true, 'title' => $req->title, $req->content, $imageName]);
         // // Crate page
@@ -63,97 +78,41 @@ class NewsController extends Controller
 
     }
 
-    public function read()
+    public function read($limit = false, $video = false, $slug = false)
     {
-        $news = News::selectRaw('news_id as id,news_slug as link, news_title as title, news_image as image')->get();
-        return response()->json(['success' => true, 'news' => $news]);
+        $select = 'news_id as id,news_slug as link, news_title as title, news_content as content, news_image as image, news_author as author, news_creation as creation, news_updated as updated';
+        $select .= $video != false ? ', news_ytId as ytId' : '';
+        $news = News::selectRaw($select);
+        $video == false ? $news->whereNull('news_ytId') : $news->where('news_ytId', '!=',null);
+        if($slug != false) {
+            $news->where('news_slug', $slug);
+        }
+        $news->orderBy('news_creation', 'DESC');
+        if($limit != false) {
+            $news->limit($limit); 
+        }
+        
+        return response()->json(['success' => true, 'news' => $slug != false ? $news->first() : $news->get()]);
+    }
+
+    public function readLimit(Request $req)
+    {
+        $limit = $req->limit;
+        return $this->read(intval($limit));
     }
 
     public function readItem(Request $req)
     {
-        $news = News::selectRaw('news_id as id, news_content as content, news_title as title, news_image as image')->where('news_slug', $req->slug)->first();
-        return response()->json(['success' => true, 'news' => $news]);
-    }
-
-    public function updatePage(Request $req)
-    {
-        $page = Page::where('pg_link', $req->page)->update(['pg_content' => $req->content]);
-        $return = $page ? ['success' => true] : ['error' => 'Erro ao atualizar página', 'success' => false];
-        return response()->json($return);
-    }
-
-    public function readPage(Request $req)
-    {
-        // return $req->page;
-        $page = Page::selectRaw('pg_content as content')->where('pg_link', $req->page)->first();
-        if(!$page) {
-            return response()->json(['error' => 'Página não encontrada', 'success' => false]);
-        }
-        return response()->json(['success' => true, 'content' => $page->content]);
-    }
-
-    public function setOrder(Request $req)
-    {
-        $pageLink = $req->page;
-        $newPosition = $req->position;
-        $parent = $req->parent;
-        $pages = Page::selectRaw('pg_link as link, pg_name as name, pg_order as position')
-            ->where('pg_order', '>', 0)
-            ->where('pg_parent', $parent)
-            ->orderBy('pg_order')
-            ->get()
-            ->toArray();
-            
-        foreach($pages as $page) {
-            if($page['link'] == $pageLink) {
-                $actualPosition = $page['position'];
-                break;
-            }
-        }
-        if($newPosition == $actualPosition) {
-            return response()->json(['success' => true, 'pages' => $pages]);
-        }
-        
-        $add = $newPosition > $actualPosition ? -1 : 1;
-        if ($newPosition > $actualPosition) {
-            while($actualPosition < $newPosition) {
-                Page::where('pg_order', ++$actualPosition)
-                    ->where('pg_parent', $parent)
-                    ->update(['pg_order' => $actualPosition - 1]);
-            }
-        } else {
-            while($newPosition < $actualPosition) {
-                Page::where('pg_order', --$actualPosition)
-                    ->where('pg_parent', $parent)
-                    ->update(['pg_order' => $actualPosition + 1]);
-            }
-        }
-        Page::where('pg_link', $pageLink)->update(['pg_order' => $newPosition]);
-
-        $pages = Page::selectRaw('pg_link as link, pg_name as name, pg_order as position')
-            ->where('pg_order', '>', 0)
-            ->where('pg_parent', $parent)
-            ->orderBy('pg_order')
-            ->get()
-            ->toArray();
-
-        return response()->json(['success' => true, 'pages' => $pages]);
-        // var_dump($pages);exit;
-        // if(!$pages) {
-        //     return response()->json(['error' => 'Página não encontrada', 'success' => false]);
-        // }
-        // return response()->json(['success' => true, 'content' => $page->content]);
+        return $this->read(false, false, $req->slug);
     }
 
     public function delete(Request $req) {
-        // FIXME: DO IT.
-        // $page = Page::where('pg_link', $req->page)->delete();
-        // $pages = Page::selectRaw('pg_link as link, pg_name as name, pg_order as position')->where('pg_order', '>', 0)->where('pg_parent', 0)->orderBy('pg_order')->get();
-        // if(!$page) {
-        //     return response()->json(['error' => 'Página não encontrada', 'success' => false, 'pages' => $pages]);
-        // }
+        $delete = News::find($req->id)->delete();
+        if(!$delete) {
+            return response()->json(['error' => 'Erro ao excluir', 'success' => false]);
+        }
         
-        // return response()->json(['success' => true, 'pages' => $pages]);
+        return response()->json(['success' => true]);
     }
 
 }

@@ -80,13 +80,13 @@ class PageController extends Controller
     public function readPage(Request $req)
     {
         // return $req->page;
-        $page = Page::selectRaw('pg_content as content')->where('pg_link', $req->page)->first();
+        $page = Page::selectRaw('pg_content as content, pg_name as title')->where('pg_link', $req->page)->first();
         
         // return var_dump($page);
         if(!$page) {
             return response()->json(['error' => 'Página não encontrada', 'success' => false]);
         }
-        return response()->json(['success' => true, 'content' => $page->content == null ? '' : $page->content]);
+        return response()->json(['success' => true, 'content' => $page->content == null ? '' : $page->content, 'title' => $page->title]);
     }
 
     public function setOrder(Request $req)
