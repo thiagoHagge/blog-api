@@ -45,7 +45,7 @@ Route::group(['middleware' => ['token.valid']], function() {
     
     // Teste
     Route::post('/saveImage', function(Request $req) {
-        $responseJson = $req->hasFile('image') ? ["url" => Helpers::createImageLink($req->file('image'))] : ['error' => 'Erro ao salvar imagem'];
+        $responseJson = $req->hasFile('image') ? ["url" => (new Helpers)->createImageLink($req->file('image'))] : ['error' => 'Erro ao salvar imagem'];
         return response()->json($responseJson);
     });
 });
