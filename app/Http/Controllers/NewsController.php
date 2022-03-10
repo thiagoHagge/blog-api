@@ -8,7 +8,7 @@ use App\Http\Helpers;
 
 class NewsController extends Controller
 {
-    public $this->Helpers;
+    public $Helpers;
     
     public function __construct() 
     {

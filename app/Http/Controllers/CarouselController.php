@@ -8,7 +8,7 @@ use App\Http\Helpers;
 
 class CarouselController extends Controller
 {
-    public $this->Helpers;
+    public $Helpers;
     
     public function __construct() 
     {
