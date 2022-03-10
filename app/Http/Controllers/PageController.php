@@ -8,17 +8,17 @@ use App\Http\Helpers;
 
 class PageController extends Controller
 {
-    public $Helpers;
+    public $this->Helpers;
     
     public function __construct() 
     {
-        $Helpers = new Helpers;
+        $this->Helpers = new Helpers;
     }
 
     public function createPage(Request $req)
     {
         // Create link and check if already exists
-        $link = $Helpers->cleanString($req->name);
+        $link = $this->Helpers->cleanString($req->name);
         if(Page::where('pg_link' ,$link)->first()) {
             return response()->json(['error' => 'Nome indisponível', 'success' => false]);
         }

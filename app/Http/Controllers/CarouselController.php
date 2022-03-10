@@ -8,18 +8,18 @@ use App\Http\Helpers;
 
 class CarouselController extends Controller
 {
-    public $Helpers;
+    public $this->Helpers;
     
     public function __construct() 
     {
-        $Helpers = new Helpers;
+        $this->Helpers = new Helpers;
     }
 
     public function createItem(Request $req) {
         $thisCarousel = ['crsl_title' => $req->title, 'crsl_subtitle' => $req->subtitle];
         
         // Upload image
-        !empty($req->image) && $thisCarousel['crsl_image'] = $Helpers->createImageLink($req->image);
+        !empty($req->image) && $thisCarousel['crsl_image'] = $this->Helpers->createImageLink($req->image);
         
         if(!empty($req->id)) {
             Carousel::find($req->id)->update($thisCarousel);

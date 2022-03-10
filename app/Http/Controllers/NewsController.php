@@ -8,18 +8,18 @@ use App\Http\Helpers;
 
 class NewsController extends Controller
 {
-    public $Helpers;
+    public $this->Helpers;
     
     public function __construct() 
     {
-        $Helpers = new Helpers;
+        $this->Helpers = new Helpers;
     }
 
     public function create(Request $req)
     {
         // Create link and check if already exists
         
-        $slug = $Helpers->cleanString($req->title);
+        $slug = $this->Helpers->cleanString($req->title);
         if(News::where('news_slug' ,$slug)->first() && empty($req->link)) {
             return response()->json(['error' => ['component' => 'title', 'message' => 'Título já utilizado'], 'success' => false]);
         }
@@ -31,7 +31,7 @@ class NewsController extends Controller
         }
         
         // Upload image
-        !empty($req->image) && $thisNews['news_image'] = $Helpers->createImageLink($req->image);
+        !empty($req->image) && $thisNews['news_image'] = $this->Helpers->createImageLink($req->image);
 
         // youtube video
         if(!empty($req->videoLink)) {
