@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\NewsController;
+use App\Http\Helpers;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +44,8 @@ Route::group(['middleware' => ['token.valid']], function() {
     Route::delete('news/delete/{id}', [NewsController::class, 'delete']);
     
     // Teste
-    Route::post('/saveImage', [CarouselController::class, 'saveImage']);
+    Route::post('/saveImage', function(Request $req) {
+        $responseJson = $req->hasFile('image') ? ["url" => Helpers::createImageLink($req->file('image'))] : ['error' => 'Erro ao salvar imagem'];
+        return response()->json($responseJson);
+    });
 });

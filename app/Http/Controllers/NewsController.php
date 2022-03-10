@@ -4,41 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\News;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Helpers;
 
 class NewsController extends Controller
 {
-    // TODO: colocar clean string em local reutilizável 
-    public function cleanString($string) {
-        $newString = preg_replace(
-            array(
-                "/(á|à|ã|â|ä)/",
-                "/(Á|À|Ã|Â|Ä)/",
-                "/(é|è|ê|ë)/",
-                "/(É|È|Ê|Ë)/",
-                "/(í|ì|î|ï)/",
-                "/(Í|Ì|Î|Ï)/",
-                "/(ó|ò|õ|ô|ö)/",
-                "/(Ó|Ò|Õ|Ô|Ö)/",
-                "/(ú|ù|û|ü)/",
-                "/(Ú|Ù|Û|Ü)/",
-                "/(ñ)/","/(Ñ)/"
-            ),
-            explode(" ", "a A e E i I o O u U n N"),
-            $string
-        );
-        $newString = str_replace('ç', 'c', $newString);
-        $newString = trim($newString);
-        $newString = strtolower($newString);
-        $newString = str_replace(' ', '-', $newString);
-        return $newString;
-    }
 
     public function create(Request $req)
     {
         // Create link and check if already exists
-        
-        $slug = $this->cleanString($req->title);
+        $slug = Helpers::cleanString($req->title);
         if(News::where('news_slug' ,$slug)->first() && empty($req->link)) {
             return response()->json(['error' => ['component' => 'title', 'message' => 'Título já utilizado'], 'success' => false]);
         }
@@ -50,11 +24,7 @@ class NewsController extends Controller
         }
         
         // Upload image
-        if(!empty($req->image)) {
-            $path = Storage::disk('s3')->put('images', $req->image);
-            $path = Storage::disk('s3')->url($path);
-            $thisNews['news_image'] = $path;
-        }
+        !empty($req->image) && $thisNews['news_image'] = Helpers::createImageLink($req->image);
 
         // youtube video
         if(!empty($req->videoLink)) {
@@ -65,13 +35,12 @@ class NewsController extends Controller
             $ytId = explode('&', $ytId[1])[0];
             $thisNews['news_ytId'] = $ytId;
         }
-        // return response()->json(['success' => true, 'title' => $req->title, $req->content, $imageName]);
-        // // Crate page
         if(!empty($req->link)) {
+            // UPDATE
             News::where('news_slug', $req->link)->update($thisNews);
             return response()->json(['success' => true, 'link' => $slug]);
         } else {
-            // Crate page
+            // CREATE
             News::create($thisNews);
             return response()->json(['success' => true, 'link' => $slug]);
         }
