@@ -68,18 +68,20 @@ class NewsController extends Controller
             $news->limit($limit); 
         }
         
-        return response()->json(['success' => true, 'news' => $slug != false ? $news->first() : $news->get()]);
+        return ['success' => true, 'news' => $slug != false ? $news->first() : $news->get()];
     }
 
     public function readLimit(Request $req)
     {
         $limit = $req->limit;
-        return $this->read(intval($limit));
+        return response()->json($this->read(intval($limit)));
     }
 
     public function readItem(Request $req)
     {
-        return $this->read(false, false, $req->slug);
+        $return = $this->read(false, false, $req->slug);
+        $return['lastNews'] = $this->read(4)['news'];
+        return response()->json($return);
     }
 
     public function delete(Request $req) {
@@ -92,15 +94,17 @@ class NewsController extends Controller
     }
 
     public function getVideosLimit(Request $req) {
-        return $this->read(intval($req->limit), true);
+        return response()->json($this->read(intval($req->limit), true));
     }
 
     public function getVideos() {
-        return $this->read(false, true);
+        return response()->json($this->read(false, true));
     }
 
     public function getVideo(Request $req) {
-        return $this->read(false, true, $req->slug);
+        $return = $this->read(false, true, $req->slug);
+        $return['lastVideos'] = $this->read(4)['news'];
+        return response()->json($return);
     }
 
 }

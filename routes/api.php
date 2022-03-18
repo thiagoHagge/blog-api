@@ -43,7 +43,6 @@ Route::group(['middleware' => ['token.valid']], function() {
     Route::post('news/new', [NewsController::class, 'create']);
     Route::delete('news/delete/{id}', [NewsController::class, 'delete']);
     
-    // Teste
     Route::post('/saveImage', function(Request $req) {
         $responseJson = $req->hasFile('image') ? ["url" => (new Helpers)->createImageLink($req->file('image'))] : ['error' => 'Erro ao salvar imagem'];
         return response()->json($responseJson);
