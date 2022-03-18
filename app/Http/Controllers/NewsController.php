@@ -103,7 +103,7 @@ class NewsController extends Controller
 
     public function getVideo(Request $req) {
         $return = $this->read(false, true, $req->slug);
-        $return['lastVideos'] = $this->read(4)['news'];
+        $return['lastVideos'] = $this->read(4, true)['news'];
         return response()->json($return);
     }
 
