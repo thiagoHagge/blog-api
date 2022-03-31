@@ -30,6 +30,26 @@ Route::get('news/get/{slug}', [NewsController::class, 'readItem']);
 Route::get('videos/get', [NewsController::class, 'getVideos']);
 Route::get('videos/get/limit/{limit}', [NewsController::class, 'getVideosLimit']);
 Route::get('videos/get/{slug}', [NewsController::class, 'getVideo']);
+Route::get('podcasts/get', [NewsController::class, 'getPodcasts']);
+Route::get('podcasts/get/limit/{limit}', [NewsController::class, 'getPodcastsLimit']);
+Route::get('/getLandingPage', function(Request $req) {
+    function getResult($arr, $index) {
+        if ($arr['success'] == 0) {
+            throw new Exception('Erro ao buscar carousel');
+        }
+        return $arr[$index];
+    }
+    try {
+        $data['carousel'] = CarouselController::getItems();
+        $data['news'] = NewsController::readLimit($req, 4)['news'];
+        $data['videos'] = NewsController::getVideosLimit($req, 3)['news'];
+        $data['podcasts'] = NewsController::getPodcastsLimit($req, 3)['news'];
+        $data['success'] = 1;
+        return response()->json($data);
+    } catch (Exception $e) {
+        return response()->json(['success' => 0, 'error' => $e->getMessage()], 500);
+    }
+});
 
 Route::group(['middleware' => ['token.valid']], function() {
     Route::post('/newPage', [PageController::class, 'createPage']);

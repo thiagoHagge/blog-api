@@ -17,14 +17,21 @@ class NewsController extends Controller
 
     public function create(Request $req)
     {
+        $title = $req->title;
+        $thisNews = [];
+
+        // Podcast
+        if(!empty($req->podcast)) {
+            $title = $this->Helpers->getUrlTitle($req->podcast);
+            $thisNews['news_podcast'] = $req->podcast;
+        }
+
         // Create link and check if already exists
-        
-        $slug = $this->Helpers->cleanString($req->title);
+        $slug = $this->Helpers->cleanString($title);
         if(News::where('news_slug' ,$slug)->first() && empty($req->link)) {
             return response()->json(['error' => ['component' => 'title', 'message' => 'Título já utilizado'], 'success' => false]);
         }
-        $thisNews = ['news_slug' => $slug, 'news_title' => $req->title, 'news_content' => $req->content == null ? '' : $req->content];
-
+        $thisNews += ['news_slug' => $slug, 'news_title' => $title, 'news_content' => $req->content == null ? '' : $req->content];
         // Author
         if(!empty($req->author)) {
             $thisNews['news_author'] = $req->author;
@@ -42,6 +49,8 @@ class NewsController extends Controller
             $ytId = explode('&', $ytId[1])[0];
             $thisNews['news_ytId'] = $ytId;
         }
+
+        // Save on DB
         if(!empty($req->link)) {
             // UPDATE
             News::where('news_slug', $req->link)->update($thisNews);
@@ -54,12 +63,14 @@ class NewsController extends Controller
 
     }
 
-    public function read($limit = false, $video = false, $slug = false)
+    public function read($limit = false, $video = false, $slug = false, $podcast = false)
     {
         $select = 'news_id as id,news_slug as link, news_title as title, news_content as content, news_image as image, news_author as author, news_creation as creation, news_updated as updated';
         $select .= $video != false ? ', news_ytId as ytId' : '';
+        $select .= $podcast != false ? ', news_podcast as podcast' : '';
         $news = News::selectRaw($select);
         $video == false ? $news->whereNull('news_ytId') : $news->where('news_ytId', '!=',null);
+        $podcast == false ? $news->whereNull('news_podcast') : $news->where('news_podcast', '!=',null);
         if($slug != false) {
             $news->where('news_slug', $slug);
         }
@@ -71,10 +82,15 @@ class NewsController extends Controller
         return ['success' => true, 'news' => $slug != false ? $news->first() : $news->get()];
     }
 
-    public function readLimit(Request $req)
+    public function readLimit(Request $req, $limit = 0)
     {
-        $limit = $req->limit;
-        return response()->json($this->read(intval($limit)));
+        $returnJson = false;
+        if($limit == 0) {
+            $returnJson = true;
+            $limit = $req->limit;
+        }
+        
+        return $returnJson ? response()->json($this->read(intval($limit))) : app('App\Http\Controllers\NewsController')->read(intval($limit));
     }
 
     public function readItem(Request $req)
@@ -93,8 +109,14 @@ class NewsController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function getVideosLimit(Request $req) {
-        return response()->json($this->read(intval($req->limit), true));
+    public function getVideosLimit(Request $req, $limit = 0) {
+        $returnJson = false;
+        if($limit == 0) {
+            $returnJson = true;
+            $limit = $req->limit;
+        }
+
+        return $returnJson ? response()->json($this->read(intval($limit), true)) : app('App\Http\Controllers\NewsController')->read(intval($limit), true);
     }
 
     public function getVideos() {
@@ -105,6 +127,19 @@ class NewsController extends Controller
         $return = $this->read(false, true, $req->slug);
         $return['lastVideos'] = $this->read(4, true)['news'];
         return response()->json($return);
+    }
+
+    public function getPodcasts() {
+        return response()->json($this->read(false, false, false, true));
+    }
+
+    public function getPodcastsLimit(Request $req, $limit = 0) {
+        $returnJson = false;
+        if($limit == 0) {
+            $returnJson = true;
+            $limit = $req->limit;
+        }
+        return $returnJson ? response()->json($this->read(intval($req->limit), false, false, true)) : app('App\Http\Controllers\NewsController')->read(intval($req->limit), false, false, true);
     }
 
 }

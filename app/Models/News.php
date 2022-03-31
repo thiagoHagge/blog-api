@@ -11,7 +11,14 @@ class News extends Model
 
     protected $table = 'front_news';
     protected $primaryKey = 'news_id';
-    protected $fillable = ['news_slug', 'news_title', 'news_content', 'news_image', 'news_ytId'];
+    protected $fillable = [
+        'news_slug', 
+        'news_title', 
+        'news_content', 
+        'news_image', 
+        'news_ytId',
+        'news_podcast'
+    ];
     const CREATED_AT = 'news_creation';
     const UPDATED_AT = 'news_updated';
 }
