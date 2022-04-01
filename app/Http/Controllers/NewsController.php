@@ -150,7 +150,7 @@ class NewsController extends Controller
             return $arr['news'];
         }
         try {
-            $data['carousel'] = CarouselController::getItems();
+            $data['carousel'] = app('App\Http\Controllers\CarouselController')->getItems();
             $data['news'] = getResult($this->readLimit($req, 4));
             $data['videos'] = getResult($this->getVideosLimit($req, 3));
             $data['podcasts'] = getResult($this->getPodcastsLimit($req, 3));
