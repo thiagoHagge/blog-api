@@ -90,7 +90,7 @@ class NewsController extends Controller
             $limit = $req->limit;
         }
         
-        return $returnJson ? response()->json($this->read(intval($limit))) : app('App\Http\Controllers\NewsController')->read(intval($limit));
+        return $returnJson ? response()->json($this->read(intval($limit))) : $this->read(intval($limit));
     }
 
     public function readItem(Request $req)
@@ -116,7 +116,7 @@ class NewsController extends Controller
             $limit = $req->limit;
         }
 
-        return $returnJson ? response()->json($this->read(intval($limit), true)) : app('App\Http\Controllers\NewsController')->read(intval($limit), true);
+        return $returnJson ? response()->json($this->read(intval($limit), true)) : $this->read(intval($limit), true);
     }
 
     public function getVideos() {
@@ -139,7 +139,26 @@ class NewsController extends Controller
             $returnJson = true;
             $limit = $req->limit;
         }
-        return $returnJson ? response()->json($this->read(intval($req->limit), false, false, true)) : app('App\Http\Controllers\NewsController')->read(intval($req->limit), false, false, true);
+        return $returnJson ? response()->json($this->read(intval($req->limit), false, false, true)) : $this->read(intval($req->limit), false, false, true);
+    }
+
+    public function getLandingPage(Request $req) {
+        function getResult($arr) {
+            if ($arr['success'] == 0) {
+                throw new Exception('Erro ao buscar dados');
+            }
+            return $arr['news'];
+        }
+        try {
+            $data['carousel'] = CarouselController::getItems();
+            $data['news'] = getResult($this->readLimit($req, 4));
+            $data['videos'] = getResult($this->getVideosLimit($req, 3));
+            $data['podcasts'] = getResult($this->getPodcastsLimit($req, 3));
+            $data['success'] = 1;
+            return response()->json($data);
+        } catch (Exception $e) {
+            return response()->json(['success' => 0, 'error' => $e->getMessage()], 500);
+        }
     }
 
 }
