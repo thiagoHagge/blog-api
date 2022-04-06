@@ -40,6 +40,11 @@ class CarouselController extends Controller
         return $items;
     }
 
+    public function getCarousel() {
+        return response()->json(['success' => true, 'items' => $this->getItems()]);
+    }
+
+
     public function delete(Request $req) {
         $carousel = Carousel::find($req->id)->delete();
         if(!$carousel) {

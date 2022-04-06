@@ -161,4 +161,8 @@ class NewsController extends Controller
         }
     }
 
+    public function getPodcast(Request $req) {
+        $return = $this->read(false, false, $req->slug, true);
+        return response()->json($return);
+    }
 }

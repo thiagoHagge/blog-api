@@ -23,6 +23,14 @@ class Helpers
             explode(" ", "a A e E i I o O u U n N"),
             $string
         );
+        $newString = preg_replace('/[^a-zA-Z0-9\s]/', '', $newString);
+        $newString = str_replace('\n', '', $newString);
+        $newString = str_replace('.', '', $newString);
+        $newString = str_replace('\\', '', $newString);
+        $newString = str_replace('/', '', $newString);
+        $newString = str_replace('=', '', $newString);
+        $newString = str_replace('?', '', $newString);
+        $newString = str_replace('#', '', $newString);
         $newString = str_replace('ç', 'c', $newString);
         $newString = str_replace('-', ' ', $newString);
         $newString = str_replace('—', ' ', $newString);

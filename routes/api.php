@@ -23,7 +23,7 @@ Route::post('/check', [UserController::class, 'checkToken']);
 
 Route::get('/getPages', [PageController::class, 'readPages']);
 Route::get('/getContent/{page}', [PageController::class, 'readPage']);
-Route::get('carousel/get', [CarouselController::class, 'getItems']);
+Route::get('carousel/get', [CarouselController::class, 'getCarousel']);
 Route::get('news/get/', [NewsController::class, 'read']);
 Route::get('news/get/limit/{limit}', [NewsController::class, 'readLimit']);
 Route::get('news/get/{slug}', [NewsController::class, 'readItem']);
@@ -32,6 +32,8 @@ Route::get('videos/get/limit/{limit}', [NewsController::class, 'getVideosLimit']
 Route::get('videos/get/{slug}', [NewsController::class, 'getVideo']);
 Route::get('podcasts/get', [NewsController::class, 'getPodcasts']);
 Route::get('podcasts/get/limit/{limit}', [NewsController::class, 'getPodcastsLimit']);
+Route::get('podcasts/get/{slug}', [NewsController::class, 'getPodcast']);
+
 Route::get('/getLandingPage', [NewsController::class, 'getLandingPage']);
 
 Route::group(['middleware' => ['token.valid']], function() {
