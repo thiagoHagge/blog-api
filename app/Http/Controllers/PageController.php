@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Page;
+use App\Models\Contact;
 use App\Http\Helpers;
 
 class PageController extends Controller
@@ -49,7 +50,8 @@ class PageController extends Controller
                 ->get()
                 ->toArray();
         }
-        return response()->json(['success' => true, 'pages' => $pages]);
+        $contact = Contact::all();
+        return response()->json(['success' => true, 'pages' => $pages, 'contact' => $contact[0]]);
     }
 
     public function updatePage(Request $req)

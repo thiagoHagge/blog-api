@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ContactController;
 use App\Http\Helpers;
 
 /*
@@ -39,6 +40,7 @@ Route::get('/getLandingPage', [NewsController::class, 'getLandingPage']);
 Route::group(['middleware' => ['token.valid']], function() {
     Route::post('/newPage', [PageController::class, 'createPage']);
     Route::put('/updatePage', [PageController::class, 'updatePage']);
+    Route::put('/contato/update', [ContactController::class, 'update']);
     Route::put('/setOrder', [PageController::class, 'setOrder']);
     Route::delete('/deletePage/{page}', [PageController::class, 'deletePage']);
     
