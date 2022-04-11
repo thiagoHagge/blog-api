@@ -22,6 +22,7 @@ use App\Http\Helpers;
 Route::post('/auth', UserController::class);
 Route::post('/check', [UserController::class, 'checkToken']);
 
+Route::get('/pages/all', [PageController::class, 'listPages']);
 Route::get('/getPages', [PageController::class, 'readPages']);
 Route::get('/getContent/{page}', [PageController::class, 'readPage']);
 Route::get('carousel/get', [CarouselController::class, 'getCarousel']);

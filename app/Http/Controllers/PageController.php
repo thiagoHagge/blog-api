@@ -136,4 +136,8 @@ class PageController extends Controller
         return response()->json(['success' => true, 'pages' => $pages]);
     }
 
+    public function listPages() {
+        $pages = Page::selectRaw('pg_link as link')->get();
+        return response()->json(['success' => true, 'pages' => $pages]);
+    }
 }
