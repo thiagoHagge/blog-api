@@ -1,6 +1,6 @@
 /node_modules
-/public_html/hot
-/public_html/storage
+/amei-ba.thiagohagge.com/hot
+/amei-ba.thiagohagge.com/storage
 /storage/*.key
 /vendor
 .env

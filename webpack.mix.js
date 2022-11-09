@@ -11,7 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public_html/js')
-    .postCss('resources/css/app.css', 'public_html/css', [
+mix.js('resources/js/app.js', 'amei-ba.thiagohagge.com/js')
+    .postCss('resources/css/app.css', 'amei-ba.thiagohagge.com/css', [
         //
     ]);
