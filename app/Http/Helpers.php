@@ -42,9 +42,16 @@ class Helpers
     }
 
     public function createImageLink($image) {
-        $path = Storage::disk('s3')->put('images', $image);
-        $url = Storage::disk('s3')->url($path);
-        return $url;
+        $disk = Storage::build([
+            'driver' => 'local',
+            'root' => '/amei-ba.thiagohagge.com/images',
+        ]);
+        $filename = uniqid(). '.' .File::extension($image->getClientOriginalName());
+
+        $disk->put($filename, file_get_contents($image));
+
+
+        return "https://amei-ba.thiagohagge.com/images/$filename";
     }
 
     function getUrlTitle($url)
@@ -53,7 +60,7 @@ class Helpers
         if (!function_exists('curl_init')) {
             die('CURL is not installed!');
         }
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -62,10 +69,10 @@ class Helpers
         // get the code of request
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
+
         // FAIL
         if ($httpCode == 400) return $url;
-        
+
         // SUCCEED!
         if ($httpCode == 200) {
             if (strlen($output) > 0) {
