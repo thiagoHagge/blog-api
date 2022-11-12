@@ -35,13 +35,17 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'amei-ba.thiagohagge.com' => [
+        'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/amei-ba.thiagohagge.com'),
+            'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
-            'visibility' => 'amei-ba.thiagohagge.com',
+            'visibility' => 'public',
         ],
-
+        'amei' => [
+            'driver' => 'local',
+            'root' => base_path('amei-ba.thiagohagge.com/images'),
+            'visibility' => 'public',
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -67,7 +71,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/amei-ba.thiagohagge.com'),
+        public_path('storage') => storage_path('app/public'),
     ],
 
 ];

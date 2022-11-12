@@ -42,15 +42,7 @@ class Helpers
     }
 
     public function createImageLink($image) {
-        $disk = Storage::build([
-            'driver' => 'local',
-            'root' => '/amei-ba.thiagohagge.com/images',
-        ]);
-        $filename = uniqid(). '.' .File::extension($image->getClientOriginalName());
-
-        $disk->put($filename, file_get_contents($image));
-
-
+        $filename = $image->store('', ['disk' => 'amei']);
         return "https://amei-ba.thiagohagge.com/images/$filename";
     }
 

@@ -9,8 +9,8 @@ use App\Http\Helpers;
 class NewsController extends Controller
 {
     public $Helpers;
-    
-    public function __construct() 
+
+    public function __construct()
     {
         $this->Helpers = new Helpers;
     }
@@ -36,9 +36,9 @@ class NewsController extends Controller
         if(!empty($req->author)) {
             $thisNews['news_author'] = $req->author;
         }
-        
+
         // Upload image
-        !empty($req->image) && $thisNews['news_image'] = $this->Helpers->createImageLink($req->image);
+        !empty($req->image) && $thisNews['news_image'] = $this->Helpers->createImageLink($req->file('image'));
 
         // youtube video
         if(!empty($req->videoLink)) {
@@ -76,9 +76,9 @@ class NewsController extends Controller
         }
         $news->orderBy('news_creation', 'DESC');
         if($limit != false) {
-            $news->limit($limit); 
+            $news->limit($limit);
         }
-        
+
         return ['success' => true, 'news' => $slug != false ? $news->first() : $news->get()];
     }
 
@@ -89,7 +89,7 @@ class NewsController extends Controller
             $returnJson = true;
             $limit = $req->limit;
         }
-        
+
         return $returnJson ? response()->json($this->read(intval($limit))) : $this->read(intval($limit));
     }
 
@@ -105,7 +105,7 @@ class NewsController extends Controller
         if(!$delete) {
             return response()->json(['error' => 'Erro ao excluir', 'success' => false]);
         }
-        
+
         return response()->json(['success' => true]);
     }
 
