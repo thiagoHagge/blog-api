@@ -86,21 +86,3 @@ To set up the backend API locally, follow these steps:
    ```
 
 7. Access the API at [http://localhost:8000](http://localhost:8000).
-
-## Contributing
-
-Contributions are welcome! If you'd like to contribute to this project, please follow these guidelines:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Make your changes and commit them with descriptive commit messages.
-4. Push your changes to your fork.
-5. Submit a pull request to the main repository.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Contact
-
-If you have any questions or suggestions regarding this project, please feel free to contact the project maintainer at [email@example.com](mailto:email@example.com).
