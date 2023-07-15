@@ -55,7 +55,7 @@ To set up the backend API locally, follow these steps:
 1. Clone the repository:
 
    ```
-   git clone https://github.com/your-username/blog-backend.git
+   git clone https://github.com/thiagoHagge/blog-api.git
    ```
 
 2. Install the dependencies:
